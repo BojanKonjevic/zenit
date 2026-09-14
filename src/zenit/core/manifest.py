@@ -142,6 +142,55 @@ def add_python_block(manifest: Manifest, block: ManifestBlock) -> None:
     manifest.python_blocks.append(block)
 
 
+def resync_python_blocks(project_dir: Path, manifest: Manifest) -> int:
+    """Re-sync stale line numbers and fingerprints in *manifest*.
+
+    Later injections or removals in the same file shift lines, so recorded
+    ``block.lines`` go stale within a single create/add/remove run. Re-run
+    each block's stored locator to find where it actually is now and update
+    ``block.lines`` plus both fingerprints from the content at that location.
+
+    Only mutates in-memory tracking data, never touches project files and
+    never writes the manifest. Callers persist via their normal manifest
+    write. Returns the number of fields updated.
+    """
+    from zenit.core.handlers.python_handler import relocate_block
+
+    fixed = 0
+    for block in manifest.python_blocks:
+        file_path = project_dir / block.file
+        if not file_path.exists():
+            continue
+
+        try:
+            actual = relocate_block(file_path, block)
+        except Exception:
+            continue
+
+        if actual is None:
+            continue
+
+        actual_str = f"{actual[0]}-{actual[1]}"
+        if actual_str != block.lines:
+            block.lines = actual_str
+            fixed += 1
+
+        text = file_path.read_text(encoding="utf-8")
+        all_lines = text.splitlines(keepends=True)
+        start_idx = actual[0] - 1
+        block_lines = all_lines[start_idx : actual[1]]
+        content = "".join(block_lines)
+        fp, fp_norm = fingerprint(content)
+        if fp != block.fingerprint:
+            block.fingerprint = fp
+            fixed += 1
+        if fp_norm != block.fingerprint_normalised:
+            block.fingerprint_normalised = fp_norm
+            fixed += 1
+
+    return fixed
+
+
 def remove_blocks_for_addon(manifest: Manifest, addon_id: str) -> None:
     """Remove all manifest entries that belong to *addon_id*."""
     manifest.python_blocks = [b for b in manifest.python_blocks if b.addon != addon_id]

@@ -282,3 +282,32 @@ def test_collect_all_stores_addon_configs():
     addon = _addon(id="redis")
     result = collect_all(_template(), [addon])
     assert addon in result._addon_configs
+
+
+# ── dep dedupe ────────────────────────────────────────────────────────────────
+
+
+def test_collect_all_dedupes_dep_declared_by_template_and_addon():
+    result = collect_all(
+        _template(deps=["python-dotenv"]),
+        [_addon(deps=["python-dotenv"])],
+    )
+    assert result.deps.count("python-dotenv") == 1
+
+
+def test_collect_all_dedupes_dep_by_package_name_ignoring_specifier():
+    result = collect_all(
+        _template(),
+        [_addon(id="a", deps=["redis>=5"]), _addon(id="b", deps=["redis"])],
+    )
+    assert len([d for d in result.deps if d.startswith("redis")]) == 1
+    assert result.deps[0] == "redis>=5"
+
+
+def test_collect_all_dedupes_dev_deps():
+    result = collect_all(
+        _template(dev_deps=["pytest"]),
+        [_addon(dev_deps=["pytest", "fakeredis"])],
+    )
+    assert result.dev_deps.count("pytest") == 1
+    assert "fakeredis" in result.dev_deps

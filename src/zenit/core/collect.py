@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from zenit.core.constants import DEFAULT_DEV_DEPS
+from zenit.core.manifest import dep_package_name
 from zenit.schema.exceptions import ZenitError
 from zenit.schema.models import (
     Contributions,
@@ -37,6 +38,23 @@ def _merge_addon_contributions(
             cloned = replace(inj, addon_id=addon.id)
             c.injections.append(cloned)
     c._addon_configs = addon_configs
+
+
+def _dedupe_deps(deps: list[str]) -> list[str]:
+    """Drop duplicate package entries, keeping the first occurrence.
+
+    The template and several addons commonly declare the same package
+    (e.g. ``python-dotenv``). Without this the generated pyproject.toml
+    lists it twice.
+    """
+    seen: set[str] = set()
+    unique: list[str] = []
+    for dep in deps:
+        name = dep_package_name(dep)
+        if name not in seen:
+            seen.add(name)
+            unique.append(dep)
+    return unique
 
 
 def _resolve_content(fc: FileContribution) -> str | None:
@@ -78,6 +96,10 @@ def collect_all(
         c.injections.append(cloned)
 
     _merge_addon_contributions(c, addon_configs)
+
+    c.deps = _dedupe_deps(c.deps)
+    c.dev_deps = _dedupe_deps(c.dev_deps)
+    c.template_dev_deps = _dedupe_deps(c.template_dev_deps)
 
     # ---- deduplicate file contributions ----
     seen: dict[str, tuple[str, FileContribution]] = {}
@@ -140,4 +162,6 @@ def collect_addon_only(addon_configs: list[AddonConfig]) -> Contributions:
     """
     c = Contributions()
     _merge_addon_contributions(c, addon_configs)
+    c.deps = _dedupe_deps(c.deps)
+    c.dev_deps = _dedupe_deps(c.dev_deps)
     return c

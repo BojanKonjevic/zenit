@@ -576,40 +576,9 @@ def _fix_python_blocks(project_dir: Path, manifest: Manifest) -> int:
 
     Returns the number of blocks whose tracking data was updated.
     """
-    from zenit.core.handlers.python_handler import relocate_block
-    from zenit.core.manifest import fingerprint as compute_fingerprint
+    from zenit.core.manifest import resync_python_blocks
 
-    fixed = 0
-    for block in manifest.python_blocks:
-        file_path = project_dir / block.file
-        if not file_path.exists():
-            continue
-
-        try:
-            actual = relocate_block(file_path, block)
-        except Exception:
-            continue
-
-        if actual is None:
-            continue
-
-        actual_str = f"{actual[0]}-{actual[1]}"
-        if actual_str != block.lines:
-            block.lines = actual_str
-            fixed += 1
-
-        text = file_path.read_text(encoding="utf-8")
-        all_lines = text.splitlines(keepends=True)
-        start_idx = actual[0] - 1
-        block_lines = all_lines[start_idx : actual[1]]
-        content = "".join(block_lines)
-        fp, fp_norm = compute_fingerprint(content)
-        if fp != block.fingerprint:
-            block.fingerprint = fp
-            fixed += 1
-        if fp_norm != block.fingerprint_normalised:
-            block.fingerprint_normalised = fp_norm
-            fixed += 1
+    fixed = resync_python_blocks(project_dir, manifest)
 
     if fixed > 0:
         write_manifest(project_dir, manifest)

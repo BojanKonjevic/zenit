@@ -16,6 +16,7 @@ from zenit.core.manifest import (
     add_python_block,
     fingerprint,
     read_manifest,
+    resync_python_blocks,
     write_manifest,
 )
 from zenit.core.pkg_name import (
@@ -215,6 +216,12 @@ def apply_contributions(
         if hooks is not None and hooks.post_apply is not None:
             hooks.post_apply(ctx, fs)
 
+    # Later injections shift lines recorded by earlier ones in the same
+    # file. Re-sync tracking data now so the manifest is clean without
+    # needing `doctor --fix`. Skip on dry run: nothing was written.
+    if not ctx.dry_run:
+        resync_python_blocks(project_dir, manifest)
+
     if not manifest_external and not ctx.dry_run:
         write_manifest(project_dir, manifest)
 
@@ -306,7 +313,11 @@ def _merge_env_vars(
     render_env: jinja2.Environment | None = None,
     render_vars: dict[str, object] | None = None,
 ) -> None:
-    """Append missing env vars to *file_name* (creating it if needed).
+    """Merge env vars into *file_name* (creating it if needed).
+
+    Keys already present are replaced in place, later contributors win.
+    Addon order is the CLI order, so ``-a sqlalchemy,postgres`` ends with
+    the postgres ``DATABASE_URL``. New keys are appended.
 
     When *render_env* and *render_vars* are provided, env var default values
     are rendered through Jinja2 before being written.  This resolves template
@@ -315,23 +326,30 @@ def _merge_env_vars(
     env_path = ctx.project_dir / file_name
     text = env_path.read_text(encoding="utf-8") if env_path.exists() else ""
 
-    existing_keys = {
-        line.split("=", 1)[0].strip()
-        for line in text.splitlines()
+    lines = text.splitlines(keepends=True)
+    key_to_index = {
+        line.split("=", 1)[0].strip(): i
+        for i, line in enumerate(lines)
         if "=" in line and not line.strip().startswith("#")
     }
 
-    new_lines: list[str] = []
+    changed = False
     for v in env_vars:
-        if v.key not in existing_keys:
-            default = v.default
-            if render_env is not None and render_vars is not None:
-                default = render_env.from_string(default).render(**render_vars)
-            line = f"{v.key}={default}"
-            if v.comment:
-                line += f"  # {v.comment}"
-            new_lines.append(line)
+        default = v.default
+        if render_env is not None and render_vars is not None:
+            default = render_env.from_string(default).render(**render_vars)
+        line = f"{v.key}={default}"
+        if v.comment:
+            line += f"  # {v.comment}"
+        line += "\n"
+        if v.key in key_to_index:
+            if lines[key_to_index[v.key]] != line:
+                lines[key_to_index[v.key]] = line
+                changed = True
+        else:
+            key_to_index[v.key] = len(lines)
+            lines.append(line)
+            changed = True
 
-    if new_lines:
-        text = text.rstrip("\n") + "\n" + "\n".join(new_lines) + "\n"
-        fs.write_file(file_name, text)
+    if changed:
+        fs.write_file(file_name, "".join(lines))

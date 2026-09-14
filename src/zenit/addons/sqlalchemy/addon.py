@@ -67,7 +67,12 @@ config = AddonConfig(
         "aiosqlite",
     ],
     env_vars=[
-        EnvVar(key="DATABASE_URL", default="sqlite+aiosqlite:///./dev.db"),
+        # When postgres is selected it owns DATABASE_URL, so default to its
+        # URL regardless of addon order. Otherwise fall back to local sqlite.
+        EnvVar(
+            key="DATABASE_URL",
+            default='[% if "postgres" in addons %]postgresql+asyncpg://postgres:postgres@localhost:5432/(( pkg_name ))[% else %]sqlite+aiosqlite:///./dev.db[% endif %]',
+        ),
     ],
     just_recipes=[
         '# generate a new alembic migration\nmigrate msg="":\n    uv run alembic revision --autogenerate -m "{{msg}}"',

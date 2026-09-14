@@ -1,5 +1,6 @@
 """Integration tests - scaffold real projects into tmp_path and verify the results."""
 
+from zenit.doctor.doctor import Severity, run_doctor
 
 # ── blank template ────────────────────────────────────────────────────────────
 
@@ -240,6 +241,34 @@ class TestFastapiAllAddons:
     def test_scaffolds_successfully(self, tmp_path, scaffold_project):
         project_dir = scaffold_project("myapi", "fastapi", self.ADDONS)
         assert project_dir.exists()
+
+    def test_doctor_clean_after_scaffold(self, tmp_path, scaffold_project):
+        """Multiple addons injecting into the same file must leave the
+        manifest line tracking exact - no drift warnings, no errors."""
+        project_dir = scaffold_project("myapi", "fastapi", self.ADDONS)
+        results = run_doctor(project_dir)
+        problems = [
+            f"{r.category}: {i.message}"
+            for r in results
+            for i in r.issues
+            if i.severity is not Severity.OK
+        ]
+        assert problems == []
+
+    def test_single_database_url_in_dotenv(self, tmp_path, scaffold_project):
+        """sqlalchemy and postgres both declare DATABASE_URL - exactly one
+        line survives, with the postgres value winning."""
+        project_dir = scaffold_project("myapi", "fastapi", self.ADDONS)
+        text = (project_dir / ".env").read_text()
+        assert text.count("DATABASE_URL=") == 1
+        assert "postgresql+asyncpg" in text
+
+    def test_no_duplicate_python_dotenv_in_pyproject(
+        self, tmp_path, scaffold_project
+    ):
+        project_dir = scaffold_project("myapi", "fastapi", self.ADDONS)
+        text = (project_dir / "pyproject.toml").read_text()
+        assert text.count("python-dotenv") == 1
 
     def test_redis_integration_file(self, tmp_path, scaffold_project):
         project_dir = scaffold_project("myapi", "fastapi", self.ADDONS)

@@ -41,6 +41,7 @@ from zenit.core.manifest import (
     dep_package_name,
     read_manifest,
     remove_blocks_for_addon,
+    resync_python_blocks,
 )
 from zenit.core.manifest import (
     fingerprint as _fingerprint,
@@ -271,6 +272,9 @@ def remove_addon(
 
         # ── manifest + lockfile (single atomic write) ────────────────────────────
         remove_blocks_for_addon(manifest, addon_id)
+        # Removals shift lines of the blocks that stay. Re-sync their
+        # tracking data so `doctor` stays clean without `--fix`.
+        resync_python_blocks(project_dir, manifest)
         new_addons = [a for a in lockfile.addons if a != addon_id]
         write_zenit_toml(
             project_dir,

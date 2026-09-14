@@ -240,7 +240,7 @@ def test_apply_env_vars_creates_dotenv(tmp_path: Path) -> None:
     assert "DATABASE_URL=postgresql://localhost" in dotenv.read_text(encoding="utf-8")
 
 
-def test_apply_env_vars_skips_duplicate_keys(tmp_path: Path) -> None:
+def test_apply_env_vars_replaces_duplicate_keys(tmp_path: Path) -> None:
     ctx, fs = _ctx(tmp_path)
     dotenv = ctx.project_dir / ".env"
     dotenv.write_text("DATABASE_URL=existing\n", encoding="utf-8")
@@ -254,8 +254,33 @@ def test_apply_env_vars_skips_duplicate_keys(tmp_path: Path) -> None:
     apply_contributions(ctx, fs, contributions, {}, _render_vars(ctx))
 
     text = dotenv.read_text(encoding="utf-8")
-    assert "postgresql://override" not in text
-    assert "DATABASE_URL=existing" in text
+    assert "DATABASE_URL=postgresql://override" in text
+    assert "DATABASE_URL=existing" not in text
+    assert text.count("DATABASE_URL=") == 1
+
+
+def test_apply_env_vars_last_contributor_wins_same_merge(tmp_path: Path) -> None:
+    ctx, fs = _ctx(tmp_path)
+    sqlite = _addon(
+        "sqlalchemy",
+        env_vars=[EnvVar(key="DATABASE_URL", default="sqlite+aiosqlite:///./dev.db")],
+    )
+    postgres = _addon(
+        "postgres",
+        env_vars=[
+            EnvVar(key="DATABASE_URL", default="postgresql://postgres@localhost/db")
+        ],
+    )
+    contributions = Contributions(
+        env_vars=sqlite.env_vars + postgres.env_vars,
+        _addon_configs=[sqlite, postgres],
+    )
+
+    apply_contributions(ctx, fs, contributions, {}, _render_vars(ctx))
+
+    text = (ctx.project_dir / ".env").read_text(encoding="utf-8")
+    assert text.count("DATABASE_URL=") == 1
+    assert "DATABASE_URL=postgresql://postgres@localhost/db" in text
 
 
 def test_apply_env_vars_appends_missing_keys(tmp_path: Path) -> None:

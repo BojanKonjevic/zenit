@@ -263,9 +263,7 @@ class TestFastapiAllAddons:
         assert text.count("DATABASE_URL=") == 1
         assert "postgresql+asyncpg" in text
 
-    def test_no_duplicate_python_dotenv_in_pyproject(
-        self, tmp_path, scaffold_project
-    ):
+    def test_no_duplicate_python_dotenv_in_pyproject(self, tmp_path, scaffold_project):
         project_dir = scaffold_project("myapi", "fastapi", self.ADDONS)
         text = (project_dir / "pyproject.toml").read_text()
         assert text.count("python-dotenv") == 1

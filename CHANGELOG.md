@@ -6,7 +6,7 @@ All notable changes to this project are documented here. Only versions published
 
 ## [1.1.2] - 2026-09-14
 
-Pre freeze fixes found by generating a demo project and running doctor on it:
+Fixes found by generating a demo project and running doctor on it:
 
 - Manifest line tracking re-syncs automatically after create, add, and remove. Fresh projects pass `doctor` with no drift warnings, and add/remove cycles keep it clean without `--fix`
 - `.env` merge replaces duplicate keys in place instead of appending. `DATABASE_URL` appears once, and the postgres value wins whenever postgres is selected regardless of addon order

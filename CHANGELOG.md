@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Only versions published on PyPI are listed. Early 1.0.x releases shipped fast with one fix each, so they are summarized in one line apiece.
 
+## [Unreleased]
+
+## [1.1.2] - 2026-09-14
+
+Pre freeze fixes found by generating a demo project and running doctor on it:
+
+- Manifest line tracking re-syncs automatically after create, add, and remove. Fresh projects pass `doctor` with no drift warnings, and add/remove cycles keep it clean without `--fix`
+- `.env` merge replaces duplicate keys in place instead of appending. `DATABASE_URL` appears once, and the postgres value wins whenever postgres is selected regardless of addon order
+- Duplicate dependencies across template and addons are deduped in the generated `pyproject.toml`
+
 ## [1.1.1] - 2026-08-04
 
 Small follow up to 1.1.0.

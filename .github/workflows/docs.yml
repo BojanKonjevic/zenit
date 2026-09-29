@@ -47,7 +47,7 @@ jobs:
           mkdir -p _site/docs _site/studio
           cp index.html _site/index.html
           cp studio.html _site/studio/index.html
-          cp studio-data.json _site/studio/studio-data.json
+          cp studio.css studio.js studio-data.json _site/studio/
           cp -r docs/.vitepress/dist/. _site/docs/
 
       - uses: actions/upload-pages-artifact@v5

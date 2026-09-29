@@ -48,46 +48,11 @@
             --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        [data-theme="light"] {
-            --bg:               #f2ede6;
-            --bg-elevated:      #f8f4ef;
-            --bg-code:          #e8e1d8;
-            --bg-subtle:        #ebe5dc;
-            --bg-canvas:        #ede8e0;
-
-            --text-primary:     #1e1c18;
-            --text-secondary:   #33302a;
-            --text-tertiary:    #6b6560;
-            --text-muted:       #8a8278;
-
-            --border:           #d6cfc5;
-            --border-light:     #ddd6cc;
-
-            --amber:            #7a5020;
-            --amber-muted:      rgba(122,80,32,0.10);
-            --amber-hover:      #5c3c16;
-            --amber-glow:       rgba(122,80,32,0.04);
-
-            --cta-bg:           #1e1c18;
-            --cta-fg:           #f2ede6;
-
-            --terminal-bg:      #1a1814;
-            --terminal-border:  #2a2620;
-            --terminal-text:    #ccc8be;
-            --terminal-prompt:  #c8922e;
-            --terminal-ok:      #7aaa72;
-            --terminal-info:    #78a8c2;
-            --terminal-dim:     #6a6458;
-
-            --nav-bg:           rgba(242,237,230,0.93);
-
-            --check:            #3a6a34;
-            --cross:            #8a3c3c;
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; color-scheme: dark; }
-        [data-theme="light"] { color-scheme: light; }
+        html { scroll-behavior: smooth; color-scheme: dark; font-size: 125%; }
+        @media (max-width: 680px) {
+            html { font-size: 112.5%; }
+        }
 
         body {
             font-family: 'Instrument Sans', -apple-system, sans-serif;
@@ -101,7 +66,7 @@
             font-weight: 500;
         }
 
-        .container { max-width: 780px; margin: 0 auto; padding: 0 2rem; }
+        .container { max-width: 880px; margin: 0 auto; padding: 0 2rem; }
 
         /* ── Grain texture overlay ─────────────────────────────────────── */
         body::before {
@@ -115,8 +80,6 @@
             background-repeat: repeat;
             background-size: 256px 256px;
         }
-        [data-theme="light"] body::before { opacity: 0.018; }
-
         /* ── Nav ───────────────────────────────────────────────────────── */
         .nav {
             position: sticky;
@@ -127,14 +90,14 @@
             -webkit-backdrop-filter: blur(20px) saturate(1.3);
             border-bottom: 1px solid var(--border);
             padding: 0 2rem;
-            height: 52px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: background 0.2s, border-color 0.2s;
         }
 
-        .logo { font-family: 'Geist Mono', monospace; font-size: 1rem; font-weight: 600; letter-spacing: -0.025em; }
+        .logo { font-family: 'Geist Mono', monospace; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.025em; }
         .logo a { text-decoration: none; color: var(--text-primary); transition: opacity 0.15s; }
         .logo a:hover { opacity: 0.5; }
 
@@ -143,7 +106,7 @@
         .nav-link {
             text-decoration: none;
             color: var(--text-tertiary);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: color 0.15s;
             position: relative;
@@ -161,48 +124,40 @@
         }
         .nav-link:hover::after { width: 100%; }
 
-        .theme-btn {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            color: var(--text-secondary);
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-        }
-        .theme-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--text-muted);
-            background: var(--bg-subtle);
-        }
-
         /* ── Hero ──────────────────────────────────────────────────────── */
         .hero { padding: 5.5rem 0 2rem; position: relative; }
         .hero h1 {
             font-family: 'Instrument Serif', serif;
-            font-size: clamp(2.1rem, 5.2vw, 3.2rem);
+            font-size: clamp(2.8rem, 6vw, 4rem);
             font-weight: 400;
             letter-spacing: -0.02em;
-            line-height: 1.15;
+            line-height: 1.12;
             margin-bottom: 1.25rem;
             color: var(--text-primary);
         }
         .hero h1 em { font-style: italic; color: var(--text-tertiary); }
 
         .hero-lead {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--text-secondary);
-            max-width: 520px;
-            line-height: 1.75;
+            max-width: 600px;
+            line-height: 1.7;
             margin-bottom: 2rem;
         }
 
         .hero-actions { display: flex; gap: 0.625rem; flex-wrap: wrap; }
+
+        .proof-strip {
+            display: flex;
+            gap: 0.5rem 1.25rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            font-family: 'Geist Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .proof-strip a { color: var(--text-tertiary); text-decoration: none; border-bottom: 1px solid var(--border); transition: color 0.15s, border-color 0.15s; }
+        .proof-strip a:hover { color: var(--amber); border-color: var(--amber); }
 
         .btn-primary {
             display: inline-flex;
@@ -210,10 +165,10 @@
             gap: 0.375rem;
             background: var(--cta-bg);
             color: var(--cta-fg);
-            padding: 0.625rem 1.25rem;
+            padding: 0.7rem 1.4rem;
             border-radius: 6px;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 600;
             letter-spacing: 0.01em;
             border: 1px solid var(--cta-bg);
@@ -231,10 +186,10 @@
             gap: 0.375rem;
             background: transparent;
             color: var(--text-tertiary);
-            padding: 0.625rem 1.25rem;
+            padding: 0.7rem 1.4rem;
             border-radius: 6px;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
             border: 1px solid var(--border);
             transition: color 0.15s, border-color 0.15s, background 0.15s;
@@ -251,9 +206,9 @@
             background: var(--bg-elevated);
             border: 1px solid var(--border);
             border-radius: 7px;
-            padding: 0.7rem 1rem;
+            padding: 0.8rem 1.1rem;
             font-family: 'Geist Mono', monospace;
-            font-size: 0.78rem;
+            font-size: 0.9rem;
             transition: border-color 0.15s, box-shadow 0.15s;
         }
         .install-pill:hover {
@@ -295,10 +250,6 @@
             pointer-events: none;
         }
 
-        [data-theme="light"] .terminal {
-            box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.08);
-        }
-
         .terminal-chrome {
             display: flex;
             align-items: center;
@@ -316,15 +267,15 @@
         .terminal-label {
             margin: 0 auto;
             font-family: 'Geist Mono', monospace;
-            font-size: 0.64rem;
+            font-size: 0.75rem;
             color: var(--terminal-dim);
             letter-spacing: 0.05em;
         }
 
         .terminal-body {
-            padding: 1.25rem 1.5rem 1.5rem;
+            padding: 1.5rem 1.75rem 1.75rem;
             font-family: 'Geist Mono', monospace;
-            font-size: 0.775rem;
+            font-size: 0.9rem;
             line-height: 1.85;
         }
 
@@ -370,6 +321,14 @@
         }
         @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 
+        .terminal-caption {
+            margin-top: 0.875rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .terminal-caption a { color: var(--amber); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+        .terminal-caption a:hover { border-color: var(--amber); }
+
         /* ── Sections ──────────────────────────────────────────────────── */
         .section {
             padding: 3.5rem 0;
@@ -379,7 +338,7 @@
 
         .section-kicker {
             font-family: 'Geist Mono', monospace;
-            font-size: 0.63rem;
+            font-size: 0.75rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--text-muted);
@@ -388,7 +347,7 @@
 
         .section-title {
             font-family: 'Instrument Serif', serif;
-            font-size: clamp(1.35rem, 2.8vw, 1.7rem);
+            font-size: clamp(1.8rem, 3.5vw, 2.2rem);
             font-weight: 400;
             letter-spacing: -0.01em;
             line-height: 1.25;
@@ -397,19 +356,19 @@
         }
 
         .section-sub {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--text-tertiary);
-            max-width: 480px;
-            line-height: 1.8;
+            max-width: 560px;
+            line-height: 1.75;
             margin-bottom: 2rem;
         }
 
         /* ── Comparison table ──────────────────────────────────────────── */
-        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 
         .compare-table th {
             font-family: 'Geist Mono', monospace;
-            font-size: 0.60rem;
+            font-size: 0.7rem;
             letter-spacing: 0.10em;
             text-transform: uppercase;
             color: var(--text-muted);
@@ -438,7 +397,7 @@
 
         .compare-note {
             margin-top: 0.875rem;
-            font-size: 0.79rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             font-style: italic;
             line-height: 1.7;
@@ -503,13 +462,13 @@
         }
 
         .feature-card h3 {
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.4rem;
             color: var(--text-primary);
             letter-spacing: -0.01em;
         }
-        .feature-card p { font-size: 0.8rem; color: var(--text-tertiary); line-height: 1.7; }
+        .feature-card p { font-size: 0.9rem; color: var(--text-tertiary); line-height: 1.7; }
 
         /* ── Ops grid ──────────────────────────────────────────────────── */
         .ops-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
@@ -543,13 +502,13 @@
 
         .ops-cmd {
             font-family: 'Geist Mono', monospace;
-            font-size: 0.77rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: var(--amber);
             margin-bottom: 0.5rem;
             display: block;
         }
-        .ops-card p { font-size: 0.8rem; color: var(--text-tertiary); line-height: 1.7; }
+        .ops-card p { font-size: 0.9rem; color: var(--text-tertiary); line-height: 1.7; }
 
         /* ── Component tags ────────────────────────────────────────────── */
         .component-box {
@@ -576,7 +535,7 @@
 
         .component-label {
             font-family: 'Geist Mono', monospace;
-            font-size: 0.60rem;
+            font-size: 0.7rem;
             letter-spacing: 0.10em;
             text-transform: uppercase;
             color: var(--text-muted);
@@ -600,7 +559,7 @@
 
         .tag {
             font-family: 'Geist Mono', monospace;
-            font-size: 0.73rem;
+            font-size: 0.85rem;
             padding: 0.35rem 0.75rem;
             background: var(--bg-code);
             border: 1px solid var(--border);
@@ -627,9 +586,9 @@
         .footer { padding: 2.5rem 0 3rem; border-top: 1px solid var(--border); }
         .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
         .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.78rem; transition: color 0.15s; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.15s; }
         .footer-links a:hover { color: var(--text-primary); }
-        .footer-meta { font-family: 'Geist Mono', monospace; font-size: 0.68rem; color: var(--text-muted); }
+        .footer-meta { font-family: 'Geist Mono', monospace; font-size: 0.8rem; color: var(--text-muted); }
 
         /* ── Scroll reveal ─────────────────────────────────────────────── */
         .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
@@ -638,7 +597,7 @@
         /* ── Mobile ────────────────────────────────────────────────────── */
         @media (max-width: 680px) {
             .hero { padding: 3.5rem 0 1.5rem; }
-            .hero h1 { font-size: 1.85rem; }
+            .hero h1 { font-size: 2.2rem; }
             .feature-grid { grid-template-columns: 1fr; }
             .ops-grid { grid-template-columns: 1fr; }
             .footer-inner { flex-direction: column; align-items: flex-start; }
@@ -655,9 +614,6 @@
         <a href="docs/getting-started" class="nav-link">Docs</a>
         <a href="studio/" class="nav-link">Studio</a>
         <a href="https://github.com/BojanKonjevic/zenit" class="nav-link" target="_blank">GitHub</a>
-        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
-            <span id="themeIcon">☀</span>
-        </button>
     </div>
 </nav>
 
@@ -666,14 +622,17 @@
     <div class="hero">
         <h1>Scaffold Python projects.<br><em>Own every line of it.</em></h1>
         <p class="hero-lead">
-            Scaffold a fresh project from scratch or bring in an existing Copier template &mdash; you own every line either way. Add features incrementally, verify integrity over time, or remove Zenit completely; your codebase keeps running without it.
+            Scaffold a fresh project from scratch or bring in an existing Copier template, you own every line either way. Add features incrementally, verify integrity over time, or remove Zenit completely; your codebase keeps running without it.
         </p>
         <div class="hero-actions">
             <a href="docs/getting-started" class="btn-primary">Read the docs →</a>
-            <a href="https://github.com/BojanKonjevic/zenit" class="btn-ghost" target="_blank">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-                GitHub
-            </a>
+            <a href="studio/" class="btn-ghost">Open Studio →</a>
+        </div>
+        <div class="proof-strip">
+            <span>v1.1.2 on <a href="https://pypi.org/project/zenit/" target="_blank">PyPI</a></span>
+            <span>1300+ tests green</span>
+            <span>MIT</span>
+            <a href="https://github.com/BojanKonjevic/zenit-demo-api" target="_blank">Example output →</a>
         </div>
     </div>
 
@@ -707,6 +666,7 @@
             <div class="tl"><span class="t-prompt">$</span><span class="t-cursor"></span></div>
         </div>
     </div>
+    <p class="terminal-caption">Build this command visually in <a href="studio/">Studio</a>, inspect every file and dependency first.</p>
 
     <div class="section reveal">
         <div class="section-kicker">Comparison</div>
@@ -733,14 +693,14 @@
         </table>
 
         <p class="compare-note">
-            Zenit is useful long-term but you're never trapped. Delete <code>.zenit.toml</code> anytime &mdash; your project keeps running exactly as before.
+            Zenit is useful long-term but you're never trapped. Delete <code>.zenit.toml</code> anytime, your project keeps running exactly as before.
         </p>
     </div>
 
     <div class="section reveal">
         <div class="section-kicker">Architecture</div>
         <h2 class="section-title">How it works</h2>
-        <p class="section-sub">Three layers that produce a complete project with no runtime dependency on Zenit itself.</p>
+        <p class="section-sub">Three layers that produce a complete project with no runtime dependency on Zenit itself. Code goes in via libcst (AST-aware, no regex hacks) and every block is fingerprinted, so removal finds exactly what was added.</p>
 
         <div class="feature-grid">
             <div class="feature-card">
@@ -748,7 +708,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
                 </span>
                 <h3>Templates</h3>
-                <p>A base project structure &mdash; directories, core files, dependencies. Choose <code>blank</code> or <code>fastapi</code>.</p>
+                <p>A base project structure: directories, core files, dependencies. Choose <code>blank</code> or <code>fastapi</code>.</p>
             </div>
             <div class="feature-card">
                 <span class="feature-icon">
@@ -770,9 +730,13 @@
     <div class="section reveal">
         <div class="section-kicker">Operations</div>
         <h2 class="section-title">Stay in control</h2>
-        <p class="section-sub">Every command you need, from scaffold to production. Use them on day one or day one hundred.</p>
+        <p class="section-sub">The four commands that cover the whole lifecycle, from scaffold to production.</p>
 
         <div class="ops-grid">
+            <div class="ops-card">
+                <span class="ops-cmd">zenit create &lt;project&gt;</span>
+                <p>Scaffold from <code>blank</code> or <code>fastapi</code>, with any addons included from the start.</p>
+            </div>
             <div class="ops-card">
                 <span class="ops-cmd">zenit add &lt;addon&gt;</span>
                 <p>Installs dependencies, creates files, injects code, and updates configuration. Reversible at any time.</p>
@@ -785,55 +749,16 @@
                 <span class="ops-cmd">zenit doctor</span>
                 <p>Verifies every file, injection, and dependency against the manifest. Catches drift before it becomes a problem.</p>
             </div>
-            <div class="ops-card">
-                <span class="ops-cmd">zenit list</span>
-                <p>See all available templates and addons. Check what's installed and what you can add next.</p>
-            </div>
-            <div class="ops-card">
-                <span class="ops-cmd">zenit create &lt;project&gt;</span>
-                <p>Scaffold a new project from a zenit-native template. Includes <code>blank</code> and <code>fastapi</code> with optional addons.</p>
-            </div>
-            <div class="ops-card">
-                <span class="ops-cmd">zenit migrate &lt;copier-source&gt;</span>
-                <p>Import any <strong>Copier</strong> template into Zenit. Prompts for questions, scans env &amp; deps, bootstraps a manifest.</p>
-            </div>
         </div>
-    </div>
-
-    <div class="section reveal">
-        <div class="section-kicker">Trust</div>
-        <h2 class="section-title">Built to be transparent</h2>
-        <p class="section-sub">No regex hacks, no hidden state. Zenit tracks exactly what it touched and can undo all of it.</p>
-
-        <div class="feature-grid">
-            <div class="feature-card">
-                <span class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                </span>
-                <h3>Structural injection</h3>
-                <p>Code inserted via libcst &mdash; AST-aware, formatter-resilient. No regex hacks that break on style changes.</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </span>
-                <h3>Fingerprinted manifest</h3>
-                <p>Every injected block is hashed. Zenit knows exactly what it wrote and can verify or remove it safely.</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                </span>
-                <h3>Zero lock-in</h3>
-                <p>Delete <code>.zenit.toml</code> and <code>uv remove zenit</code>. Your project runs without us.</p>
-            </div>
-        </div>
+        <p class="compare-note">
+            Also <code>zenit list</code>, <code>zenit graph</code>, and <code>zenit migrate</code> for Copier imports. Full reference in <a href="docs/commands/" style="color: var(--amber); text-decoration: none;">Commands</a>.
+        </p>
     </div>
 
     <div class="section reveal">
         <div class="section-kicker">Components</div>
         <h2 class="section-title">What's included</h2>
-        <p class="section-sub">Native templates and addons for Python projects &mdash; plus the ability to import any <strong>Copier</strong> template.</p>
+        <p class="section-sub">Two templates, nine addons, plus the ability to import any <strong>Copier</strong> template. Inspect them all in <a href="studio/" style="color: var(--amber); text-decoration: none;">Studio</a>.</p>
 
         <div class="component-box">
             <div class="component-label">Templates</div>
@@ -877,6 +802,7 @@
             <div class="footer-links">
                 <a href="docs/getting-started">Documentation</a>
                 <a href="studio/">Studio</a>
+                <a href="https://github.com/BojanKonjevic/zenit-demo-api" target="_blank">Demo project</a>
                 <a href="https://github.com/BojanKonjevic/zenit" target="_blank">GitHub</a>
                 <a href="https://github.com/BojanKonjevic/zenit/issues" target="_blank">Issues</a>
                 <a href="docs/contributing">Contribute</a>
@@ -889,34 +815,6 @@
 </div>
 
 <script>
-    const btn = document.getElementById('themeBtn');
-    const icon = document.getElementById('themeIcon');
-
-    function applyTheme(t) {
-        if (t === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            icon.textContent = '☾';
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            icon.textContent = '☀';
-        }
-        localStorage.setItem('zenit-theme', t);
-    }
-
-    const saved = localStorage.getItem('zenit-theme');
-    if (saved) {
-        applyTheme(saved);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        applyTheme('light');
-    } else {
-        applyTheme('dark');
-    }
-
-    btn.addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-theme');
-        applyTheme(current === 'light' ? 'dark' : 'light');
-    });
-
     const copyBtn = document.getElementById('copyBtn');
     copyBtn.addEventListener('click', async () => {
         await navigator.clipboard.writeText('uv tool install zenit');
